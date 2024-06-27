@@ -15,6 +15,11 @@ python = "3.11.*"
 fastapi = "^0.111.0"
 pydantic = {extras = ["email"], version = "^2.7.4"}
 sqlalchemy = "^2.0.31"
+<<<<<<< HEAD
+=======
+pydantic-settings = "^2.3.4"
+alembic = "^1.13.2"
+>>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "^5.0.0"
