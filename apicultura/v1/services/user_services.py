@@ -1,7 +1,11 @@
 from fastapi import Depends
 
 from apicultura.core.exceptions import NotFoundException
+<<<<<<< HEAD
 from apicultura.core.schemas.user_schema import UserDB, UserIn, UserUpdate
+=======
+from apicultura.core.schemas.user import UserDB, UserIn, UserUpdate
+>>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
 from apicultura.v1.repo.UserRepository import UserRepository
 
 

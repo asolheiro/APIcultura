@@ -177,3 +177,7 @@ pyrightconfig.json
 
 # Generated using ignr.py - github.com/Antrikshy/ignr.py
 
+<<<<<<< HEAD
+=======
+database.db
+>>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)

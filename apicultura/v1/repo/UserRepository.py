@@ -5,8 +5,13 @@ from sqlalchemy.orm import Session
 
 from apicultura.core.dependencies import get_db
 from apicultura.core.exceptions import DuplicatedRegister, NotFoundException
+<<<<<<< HEAD
 from apicultura.core.models.user_model import User
 from apicultura.core.schemas.user_schema import UserIn
+=======
+from apicultura.core.models.user import User
+from apicultura.core.schemas.user import UserIn
+>>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
 
 
 class UserRepository:

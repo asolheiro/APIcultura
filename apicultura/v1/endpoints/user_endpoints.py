@@ -2,7 +2,11 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
 
+<<<<<<< HEAD
 from apicultura.core.schemas.user_schema import (
+=======
+from apicultura.core.schemas.user import (
+>>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
     UserIn,
     UserList,
     UserOut,
