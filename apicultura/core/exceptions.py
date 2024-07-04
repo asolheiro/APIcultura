@@ -15,5 +15,5 @@ class DuplicatedRegister(HTTPException):
     def __init__(self, model) -> None:
         super().__init__(
             status.HTTP_409_CONFLICT,
-            f'Duplicated register on {model.__name__}',
+            f"Duplicated register on {model.__name__}",
         )

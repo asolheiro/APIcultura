@@ -1,8 +1,11 @@
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import Mapped, mapped_column
 
-Base = declarative_base()
+from apicultura.core.models.base import BModel
 
 
-class User(Base):
-    __tablename__ = 'users'
-    ...
+class User(BModel):
+    __tablename__ = "users"
+
+    username: Mapped[str] = mapped_column(unique=True)
+    password: Mapped[str]
+    email: Mapped[str] = mapped_column(unique=True)

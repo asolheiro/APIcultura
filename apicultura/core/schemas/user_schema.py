@@ -7,10 +7,6 @@ class UserIn(BaseModel):
     password: str
 
 
-class UserDB(UserIn):
-    id: int
-
-
 class UserOut(BaseModel):
     id: int
     username: str
@@ -20,10 +16,12 @@ class UserOut(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+    username: str | None = None
+    email: EmailStr | None = None
+    password: str | None = None
 
 
-class UserList(BaseModel):
+class UsersList(BaseModel):
     users: list[UserOut]
+
+    model_config = ConfigDict(from_attributes=True)
