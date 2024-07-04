@@ -1,20 +1,16 @@
-<<<<<<< HEAD
 from http import HTTPStatus
-=======
-from sqlalchemy import select
 
-from apicultura.core.models.user import User
->>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
+from apicultura.tests.factories.user_factory import UserFactory
+from apicultura.core.schemas import user_schema
 
-PATH = '/v1/users'
+PATH = "/v1/users/"
 
-
-<<<<<<< HEAD
-def test_create_user(client):
+# TESTS TO CREATE ENDPOINT
+def test_successful_create_user(client):
     data = {
-        'username': 'karl',
-        'email': 'karl@example.com',
-        'password': 'secret',
+        "username": "karl",
+        "email": "karl@example.com",
+        "password": "secret",
     }
 
     response = client.post(
@@ -22,193 +18,114 @@ def test_create_user(client):
         json=data,
     )
 
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
-        'username': data['username'],
-        'email': data['email'],
-        'id': 1,
+        "username": data["username"],
+        "email": data["email"],
+        "id": 1,
     }
 
-def test_read_user_successful(client):
-    url = PATH + str(1)
-    response = client.get(
-        url
+
+def test_unsuccessful400_creat_existing_username(client):
+    user = UserFactory()
+
+    data = {
+        'username': 'karl',
+        'email': user.email,
+        'password': 'secret'
+    }
+    response = client.post(
+        PATH,
+        json=data
     )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Email already exists on database'}
+
+def test_unsuccessful400_creat_existing_email(client):
+    user = UserFactory()
+
+    data = {
+        'username': user.username,
+        'email': 'karl@pep.com',
+        'password': 'secret'
+    }
+    response = client.post(
+        PATH,
+        json=data
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Username already exists on database'}
+
+# TESTS TO READ ENDPOINTS
+def test_read_user_successful(client):
+    user = UserFactory(username="Karl", password="Pep", email="karl@pep.com")
+
+    url = PATH + str(user.id)
+
+    response = client.get(url)
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'username': 'karl',
-        'email': 'karl@example.com',
-        'id': 1
+        "username": user.username,
+        "email": user.email,
+        "id": user.id,
     }
+
 
 def test_list_users_successful(client):
-    url = PATH + "/view"
-    response = client.get(
-        url
-    )
+    users =  UserFactory.create_batch(5)
+    users_schema = {'users': [user_schema.UserOut.model_validate(user).model_dump() for user in users]}
+
+    url = PATH + "view/"
+    response = client.get(url)
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() is not None
+    assert response.json() == users_schema
 
 
+# TESTS TO UPDATE ENDPOINT
 def test_update_user_successful(client):
-    data = {
-        'username': 'Pep'
-    }
-    url = PATH + str(1)
-    
-    response = client.put(
-        url,
-        json=data
-    )
+    user = UserFactory()
+    data = {"username": "Karl"}
+
+    url = PATH + str(user.id)
+
+    response = client.put(url, json=data)
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'username': data['username'],
-        'email': 'karl@example.com',
-        'id': 1
+        "username": data["username"],
+        "email": user.email,
+        "id": user.id,
     }
+
 
 def test_update_user_unsuccessful_404(client):
-    data = {
-        'username': 'Pep'
-    }
+    data = {"username": "Pep"}
     url = PATH + str(42)
-    
-    response = client.put(
-        url,
-        json=data
-    )
+
+    response = client.put(url, json=data)
 
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {"details": "User not found"}
+    assert response.json() == {"detail": "User not found"}
 
 
-def test_delete_usersuccessful(client):
-    url = PATH + str(1)
+# TESTS TO DELETE ENDPOINT
+def test_delete_user_successful(client):
+    user = UserFactory()
+    url = PATH + str(user.id)
 
-    response = client.delete(
-        url
-    )
+    response = client.delete(url)
 
     assert response.status_code == HTTPStatus.NO_CONTENT
-    assert response.json() is None
 
 
 def test_delete_user_unsuccessful_404(client):
     url = PATH + str(42)
-    
-    response = client.put(
-        url
-        )
+
+    response = client.delete(url)
 
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {"details": "User not found"}
-=======
-def test_create_user(session):
-    new_user = User(
-        username='karl', password='secret', email='karl@examples.com'
-    )
-
-    session.add(new_user)
-    session.commit()
-
-    user = session.scalar(select(User).where(User.username == 'karl'))
-    assert user.username == new_user.username
-    # data = {
-    #     'username': 'karl',
-    #     'email': 'karl@example.com',
-    #     'password': 'secret',
-    # }
-
-    # response = client.post(
-    #     PATH,
-    #     json=data,
-    # )
-
-    # assert response.status_code == HTTPStatus.NOT_FOUND
-    # assert response.json() == {
-    #     'username': data['username'],
-    #     'email': data['email'],
-    #     'id': 1,
-    # }
-
-
-# def test_read_user_successful(client):
-#     url = PATH + str(1)
-#     response = client.get(
-#         url
-#     )
-
-#     assert response.status_code == HTTPStatus.OK
-#     assert response.json() == {
-#         'username': 'karl',
-#         'email': 'karl@example.com',
-#         'id': 1
-#     }
-
-# def test_list_users_successful(client):
-#     url = PATH + "/view"
-#     response = client.get(
-#         url
-#     )
-
-#     assert response.status_code == HTTPStatus.OK
-#     assert response.json() is not None
-
-
-# def test_update_user_successful(client):
-#     data = {
-#         'username': 'Pep'
-#     }
-#     url = PATH + str(1)
-
-#     response = client.put(
-#         url,
-#         json=data
-#     )
-
-#     assert response.status_code == HTTPStatus.OK
-#     assert response.json() == {
-#         'username': data['username'],
-#         'email': 'karl@example.com',
-#         'id': 1
-#     }
-
-# def test_update_user_unsuccessful_404(client):
-#     data = {
-#         'username': 'Pep'
-#     }
-#     url = PATH + str(42)
-
-#     response = client.put(
-#         url,
-#         json=data
-#     )
-
-#     assert response.status_code == HTTPStatus.NOT_FOUND
-#     assert response.json() == {"details": "User not found"}
-
-
-# def test_delete_usersuccessful(client):
-#     url = PATH + str(1)
-
-#     response = client.delete(
-#         url
-#     )
-
-#     assert response.status_code == HTTPStatus.NO_CONTENT
-#     assert response.json() is None
-
-
-# def test_delete_user_unsuccessful_404(client):
-#     url = PATH + str(42)
-
-#     response = client.put(
-#         url
-#         )
-
-#     assert response.status_code == HTTPStatus.NOT_FOUND
-#     assert response.json() == {"details": "User not found"}
->>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
+    assert response.json() == {"detail": "User not found"}

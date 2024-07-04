@@ -1,1 +1,1 @@
-from apicultura.core.models.user import User
+from apicultura.core.models.user_model import User

@@ -1,5 +1,3 @@
-PORT=8000
-
 setup:
 	clear
 	@pip install -U pip setuptools poetry
@@ -13,15 +11,6 @@ dependencies:
 update:
 	@poetry update
 
-lint:
-	clear
-	@echo "Checking code style..."
-	ruff check . && ruff check . --diff
-
-format:
-	@echo "Applying code style..."
-	ruff check . --fix && ruff format .'
-
 run:
 	clear
 	fastapi dev apicultura/main.py
@@ -30,8 +19,15 @@ run-api:
 	clear
 	@poetry run uvicorn apicultura.main:app --host 0.0.0.0 -- port ${PORT} --reload
 
-pre_test:
-	task lint || task format
+lint:
+	@echo "Checking code style..."
+	poetry run ruff check . 
+
+style:
+	@echo "Applying code style..."
+	poetry run isort .
+	poetry run ruff check --select I --fix
+	poetry run ruff format
 
 post_test:
 	poetry run coverage report -m
@@ -40,13 +36,12 @@ post_test:
 unit:
 	clear
 	@echo "Running unit tests..."
-	poetry run coverage run -m pytest apicultura -vv
+	poetry run coverage run -m pytest apicultura -vv -x
 
 test:
 	clear
-	make pre_test
-	make test
-	make post_test
+	@make lint
+	@make unit
 
 build:
 	clear 
@@ -66,3 +61,9 @@ db-stop:
 
 clean:
 	docker system prune -y
+
+revision:
+	poetry run alembic revision -m ${M} --autogenerate
+
+migrate:
+	poetry run alembic upgrade head

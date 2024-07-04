@@ -5,13 +5,8 @@ from sqlalchemy.orm import Session
 
 from apicultura.core.dependencies import get_db
 from apicultura.core.exceptions import DuplicatedRegister, NotFoundException
-<<<<<<< HEAD
 from apicultura.core.models.user_model import User
 from apicultura.core.schemas.user_schema import UserIn
-=======
-from apicultura.core.models.user import User
-from apicultura.core.schemas.user import UserIn
->>>>>>> a694a75 (Primeira migração com alembic. Adicionando a tabela users)
 
 
 class UserRepository:
@@ -23,14 +18,27 @@ class UserRepository:
 
     @property
     def base_query(self):
-        return self.db.query(
-            self._model.filter(self._model.deleted_at.is_(None))
+        return (
+            self.db.query(self._model)
+            .filter(self._model.deleted_at.is_(None))
+            .order_by(self._model.created_at.asc())
         )
 
     def get_by_id(self, pk: int) -> User:
-        user = self.base_query.filter_by(id=pk).first()
-        if not user:
-            raise NotFoundException('User not found')
+        return self.base_query.filter_by(id=pk).first()
+
+    def get_by_username_or_email(self, username: str, email: str) -> User:
+        user = self.db.scalar(
+            select(User).where(
+                (User.username == username) | (User.email == email)
+            )
+        )
+
+        return user
+
+    def list_and_filter_users(self, limit: int, skip: int):
+        query = self.base_query
+        return query.offset(skip).limit(limit).all()
 
     def create(self, user: UserIn) -> User:
         self.db.add(user)
@@ -46,7 +54,7 @@ class UserRepository:
     def update(self, user_id: int, **updated_values) -> User:
         db_user = self.db.scalar(select(User).where(User.id == user_id))
         if not db_user:
-            raise NotFoundException('User not found')
+            raise NotFoundException("User not found")
 
         for key, value in updated_values.items():
             setattr(db_user, key, value)
@@ -60,9 +68,9 @@ class UserRepository:
     def delete(self, user_id: int) -> User:
         user = self.db.scalar(select(User).where(User.id == user_id))
         if not user:
-            raise NotFoundException('User not found')
+            raise NotFoundException("User not found")
 
         self.db.delete(user)
         self.db.commit()
 
-        return 'ok'
+        return "ok"
