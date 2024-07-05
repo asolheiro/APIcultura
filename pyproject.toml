@@ -18,6 +18,8 @@ sqlalchemy = "^2.0.31"
 isort = "^5.13.2"
 psycopg2-binary = "^2.9.9"
 alembic = "^1.13.2"
+pyjwt = "^2.8.0"
+pwdlib = {extras = ["argon2"], version = "^0.2.0"}
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "^5.0.0"

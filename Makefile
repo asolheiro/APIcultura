@@ -36,7 +36,7 @@ post_test:
 unit:
 	clear
 	@echo "Running unit tests..."
-	poetry run coverage run -m pytest apicultura -vv -x
+	poetry run coverage run -m pytest apicultura -x
 
 test:
 	clear
