@@ -24,5 +24,3 @@ def crete_access_token(data: dict):
         )
     
     return encode_jwt
-
-

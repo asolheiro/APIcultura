@@ -6,12 +6,11 @@ from sqlalchemy.pool import StaticPool
 
 from apicultura.core.dependencies import get_db
 from apicultura.core.models.base import Base
-
-# from apicultura.core.security.user import UserSecurity
 from apicultura.core.settings import Settings
 from apicultura.main import app
 
-# from apicultura.tests.factories.user import get_user_factory
+# from apicultura.tests.factories.user_factory import UserFactory
+from apicultura.core.security.password_hash import get_password_hash
 
 settings = Settings()
 
@@ -52,25 +51,17 @@ def client():
     app.dependency_overrides.clear()
 
 
-# @pytest.fixture(autouse=True, scope="function")
-# def token(client):
-#     UserFactory = get_user_factory(session)
-#     _password = "12345"
-#     user = UserFactory(
-#         username="admin",
-#         password=UserSecurity().get_password_hash(
-#             _password,
-#         ),
-#     )
+@pytest.fixture()
+def user(client):
+    user = {
+        'username': 'admin',
+        'email': 'admin@example.com',
+        'password': get_password_hash('424242')
+    }
 
-#     return get_token_from_user(user=user, password=_password, client=client)
+    client.post(
+        'v1/users/',
+        json=user
+    )
 
-
-# def get_token_from_user(user, password, client):
-#     data = {"email": user.email, "password": password}
-#     response = client.post(
-#         "/v1/auth/", json=data, headers={"content-type": "application/json"}
-#     )
-#     data = response.json()
-#     _token = data["token"]["access_token"]
-#     return _token
+    return user
