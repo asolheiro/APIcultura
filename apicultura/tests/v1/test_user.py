@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from apicultura.tests.factories.user_factory import UserFactory
+
 from apicultura.core.schemas import user_schema
 
 PATH = "/v1/users/"
@@ -26,9 +26,8 @@ def test_successful_create_user(client):
     }
 
 
-def test_unsuccessful400_creat_existing_username(client):
-    user = UserFactory()
-
+def test_unsuccessful400_creat_existing_username(client, user):
+    
     data = {
         'username': 'karl',
         'email': user.email,
@@ -40,11 +39,9 @@ def test_unsuccessful400_creat_existing_username(client):
     )
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
-    assert response.json() == {'detail': 'Email already exists on database'}
+    assert response.json() == {'detail': 'Username already exists on database'}
 
-def test_unsuccessful400_creat_existing_email(client):
-    user = UserFactory()
-
+def test_unsuccessful400_creat_existing_email(client, user):
     data = {
         'username': user.username,
         'email': 'karl@pep.com',
@@ -59,8 +56,8 @@ def test_unsuccessful400_creat_existing_email(client):
     assert response.json() == {'detail': 'Username already exists on database'}
 
 # TESTS TO READ ENDPOINTS
-def test_read_user_successful(client):
-    user = UserFactory(username="Karl", password="Pep", email="karl@pep.com")
+def test_read_user_successful(client, user):
+    
 
     url = PATH + str(user.id)
 
@@ -74,8 +71,7 @@ def test_read_user_successful(client):
     }
 
 
-def test_list_users_successful(client):
-    users =  UserFactory.create_batch(5)
+def test_list_users_successful(client, users):
     users_schema = {'users': [user_schema.UserOut.model_validate(user).model_dump() for user in users]}
 
     url = PATH + "view/"
@@ -86,14 +82,18 @@ def test_list_users_successful(client):
 
 
 # TESTS TO UPDATE ENDPOINT
-def test_update_user_successful(client):
-    user = UserFactory()
+def test_update_user_successful(client, user, token):
     data = {"username": "Karl"}
 
     url = PATH + str(user.id)
 
-    response = client.put(url, json=data)
-
+    response = client.put(
+        url=url,
+        headers={
+            "Authorization": f"Bearer {token}"
+        }, 
+        json=data,
+    )
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         "username": data["username"],
@@ -102,30 +102,43 @@ def test_update_user_successful(client):
     }
 
 
-def test_update_user_unsuccessful_404(client):
+def test_update_user_unsuccessful_404(client, token):
     data = {"username": "Pep"}
     url = PATH + str(42)
 
-    response = client.put(url, json=data)
+    response = client.put(
+        url, 
+        headers = {
+            "Authorization": f"Bearer {token}"
+        },
+        json=data)
 
-    assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {"detail": "User not found"}
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {"detail": "Not enough permissions"}
 
 
 # TESTS TO DELETE ENDPOINT
-def test_delete_user_successful(client):
-    user = UserFactory()
+def test_delete_user_successful(client, user, token):
     url = PATH + str(user.id)
 
-    response = client.delete(url)
+    response = client.delete(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}"
+        })
 
     assert response.status_code == HTTPStatus.NO_CONTENT
 
 
-def test_delete_user_unsuccessful_404(client):
+def test_delete_user_unsuccessful_404(client, token):
     url = PATH + str(42)
 
-    response = client.delete(url)
+    response = client.delete(
+        url,
+        headers={
+            "Authorization":f"Bearer {token}"
+        }
+        )
 
-    assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {"detail": "User not found"}
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {"detail": "Not enough permissions"}
