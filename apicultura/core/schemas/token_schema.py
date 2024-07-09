@@ -5,3 +5,6 @@ class TokenOut(BaseModel):
     token_type: str
 
     model_config = ConfigDict(from_attributes=True)
+
+class TokenData(BaseModel):
+    username: str | None = None

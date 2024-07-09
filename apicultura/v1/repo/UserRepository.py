@@ -7,6 +7,7 @@ from apicultura.core.dependencies import get_db
 from apicultura.core.exceptions import DuplicatedRegister, NotFoundException
 from apicultura.core.models.user_model import User
 from apicultura.core.schemas.user_schema import UserIn
+from apicultura.core.security.password_hash import get_password_hash
 
 
 class UserRepository:
@@ -57,6 +58,8 @@ class UserRepository:
             raise NotFoundException("User not found")
 
         for key, value in updated_values.items():
+            if key == 'password':
+                return get_password_hash(value)
             setattr(db_user, key, value)
 
         self.db.add(db_user)

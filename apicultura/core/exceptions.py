@@ -17,3 +17,14 @@ class DuplicatedRegister(HTTPException):
             status.HTTP_409_CONFLICT,
             f"Duplicated register on {model.__name__}",
         )
+
+class CredentialsException(HTTPException):
+    def __init__(
+            self, 
+            headers,
+            details='Could not validate credentials') -> None: 
+        super().__init__(
+            status.HTTP_401_UNAUTHORIZED,
+            details,
+            headers={'WWW-Authenticate': 'Bearer'}
+        )

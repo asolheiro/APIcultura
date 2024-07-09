@@ -2,6 +2,8 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
 
+from apicultura.core.models.user_model import User
+from apicultura.core.security.user import get_current_user
 from apicultura.core.schemas.user_schema import UserIn, UserOut, UserUpdate, UsersList
 from apicultura.v1.services.user_services import UserServices
 
@@ -28,10 +30,19 @@ def update_user(
     user_id: int,
     user_update: UserUpdate,
     service: UserServices = Depends(UserServices),
+    current_user: User = Depends(get_current_user)
 ):
-    return service.update_user(user_id=user_id, user_update=user_update)
+    return service.update_user(
+        user_id=user_id, 
+        user_update=user_update, 
+        current_user=current_user
+        )
 
 
 @router.delete("/{user_id}", status_code=HTTPStatus.NO_CONTENT)
-def delete_user(user_id: int, service: UserServices = Depends(UserServices)):
-    return service.delete_user(user_id=user_id)
+def delete_user(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    service: UserServices = Depends(UserServices)
+):
+    return service.delete_user(user_id=user_id, current_user=current_user)

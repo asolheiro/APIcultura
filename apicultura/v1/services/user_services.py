@@ -46,8 +46,12 @@ class UserServices:
         
         return self.repo.create(user=db_user)
 
-    def update_user(self, user_id: int, user_update: UserUpdate):
+    def update_user(self, user_id: int, user_update: UserUpdate, current_user: User):
         """Update an existing user"""
+
+        if current_user.id != user_id:
+            raise BadRequestException('Not enough permissions')
+        
         db_user = self.repo.get_by_id(pk=user_id)
         if not user_id:
             raise NotFoundException("User not found")
@@ -57,8 +61,12 @@ class UserServices:
 
         return db_user
 
-    def delete_user(self, user_id: int):
+    def delete_user(self, user_id: int, current_user: User):
         """Delete and existing user"""
+        
+        if current_user.id != user_id:
+            raise BadRequestException('Not enough permissions')
+        
         user = self.get_user_by_id(user_id=user_id)
         if not user:
             raise NotFoundException("User not found")

@@ -6,10 +6,11 @@ from sqlalchemy.pool import StaticPool
 
 from apicultura.core.dependencies import get_db
 from apicultura.core.models.base import Base
+from apicultura.core.models.user_model import User
 from apicultura.core.settings import Settings
 from apicultura.main import app
 
-# from apicultura.tests.factories.user_factory import UserFactory
+from apicultura.tests.factories.user_factory import get_user_factory
 from apicultura.core.security.password_hash import get_password_hash
 
 settings = Settings()
@@ -50,18 +51,30 @@ def client():
         yield _client
     app.dependency_overrides.clear()
 
+UserFactory = get_user_factory(session=session)
 
 @pytest.fixture()
-def user(client):
-    user = {
-        'username': 'admin',
-        'email': 'admin@example.com',
-        'password': get_password_hash('424242')
-    }
-
-    client.post(
-        'v1/users/',
-        json=user
+def user(client) -> User:
+    return UserFactory(
+        username='karl',
+        email='karl@pep.com',
+        password=get_password_hash('ItsASecret'),
     )
 
-    return user
+
+@pytest.fixture()
+def users(client):
+    return UserFactory.create_batch(5)
+
+
+@pytest.fixture()
+def token(client, user):
+    response = client.post(
+        'v1/token/',
+        data = {
+            'username': user.email,
+            'password': 'ItsASecret'
+        }
+    )
+
+    return response.json()['access_token']
