@@ -1,6 +1,6 @@
 # Desenvolvimento de API RESTful com FastAPI, Docker, e PostgreSQL
 
-Esta é uma API genérica, criada com basa em um "ToDo Manager", um gerenciador de tarefas, mas feita para ser usada como objeto de estudo para mim e para a comunidade e como referência para outros projetos. Por estes motivos, esse projeto sempre estará em constante adaptação, com adições de tecnologias e padrões que eu achar válido para um desenvolvedor da área. Sintam-se livres para enviar sugestões e comentários, o debate é o mais importante.
+Esta é uma API genérica, criada com base em um "ToDo Manager", um gerenciador de tarefas, mas feita para ser usada como objeto de estudo para mim e para a comunidade e como referência para outros projetos. Por estes motivos, esse projeto sempre estará em constante adaptação, com adições de tecnologias e padrões que eu achar válido para um desenvolvedor da área. Sintam-se livres para enviar sugestões e comentários, o debate é o mais importante.
 
 Neste projeto, temos uma API RESTful robusta e escalável utilizando FastAPI, Docker e PostgreSQL. 
 O objetivo principal é criar um sistema eficiente e seguro, com foco em alta performance e facilidade de manutenção. 
