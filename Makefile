@@ -46,12 +46,12 @@ test:
 build:
 	clear 
 	@echo "Building docker image..."
-	@docker buildx build -t asolheiro/APIcultura .
+	@docker buildx build -t ${USER}/APIcultura .
 
 run-container:
 	clear
 	@echo "Running APIcultura container..."
-	@docker run --env-file=.env asolheiro/APIcultura
+	@docker run --env-file=.env ${USER}/APIcultura
 
 db: 
 	docker compose up -d
