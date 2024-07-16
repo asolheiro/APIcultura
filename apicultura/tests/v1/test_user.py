@@ -113,7 +113,18 @@ def test_update_user_unsuccessful_404(client, token):
         },
         json=data)
 
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {"detail": "Not enough permissions"}
+
+
+def test_update_user_unseccessful_401(client, token, user_2):
+    response = client.put(
+        PATH + str(user_2.id),
+        json = {"username": "update_test"},
+        headers = {"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {"detail": "Not enough permissions"}
 
 
@@ -140,5 +151,5 @@ def test_delete_user_unsuccessful_404(client, token):
         }
         )
 
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {"detail": "Not enough permissions"}

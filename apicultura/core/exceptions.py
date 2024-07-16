@@ -19,12 +19,8 @@ class DuplicatedRegister(HTTPException):
         )
 
 class CredentialsException(HTTPException):
-    def __init__(
-            self, 
-            headers,
-            details='Could not validate credentials') -> None: 
+    def __init__(self, details,) -> None: 
         super().__init__(
             status.HTTP_401_UNAUTHORIZED,
             details,
-            headers={'WWW-Authenticate': 'Bearer'}
         )

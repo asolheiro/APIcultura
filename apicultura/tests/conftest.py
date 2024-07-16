@@ -61,6 +61,13 @@ def user(client) -> User:
         password=get_password_hash('ItsASecret'),
     )
 
+@pytest.fixture()
+def user_2(client) -> User:
+    return UserFactory(
+        username='pep',
+        email='pep@karl.com',
+        password=get_password_hash('ItsASecret'),
+    )
 
 @pytest.fixture()
 def users(client):
