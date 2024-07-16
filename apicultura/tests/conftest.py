@@ -70,7 +70,7 @@ def users(client):
 @pytest.fixture()
 def token(client, user):
     response = client.post(
-        'v1/token/',
+        'v1/auth/',
         data = {
             'username': user.email,
             'password': 'ItsASecret'

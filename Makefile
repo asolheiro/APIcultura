@@ -17,7 +17,7 @@ run:
 
 run-api:
 	clear
-	@poetry run uvicorn apicultura.main:app --host 0.0.0.0 -- port ${PORT} --reload
+	@poetry run uvicorn apicultura.main:app --host 0.0.0.0 --port ${PORT} --reload
 
 lint:
 	@echo "Checking code style..."

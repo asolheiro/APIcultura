@@ -22,7 +22,7 @@ def test_create_jwt_token():
 
 def test_get_token(client, user):
     response = client.post(
-        url='/v1/token/',
+        url='/v1/auth/',
         data={
             'username': user.email,
             'password': 'ItsASecret',
@@ -37,7 +37,7 @@ def test_get_token(client, user):
 
 def test_get_token_unsuccesfull(client):
     response = client.post(
-        '/v1/token/',
+        '/v1/auth/',
         data = {
             'username': 'Pep@karl.com',
             'password': 'PepKarl',
