@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from apicultura.core.exceptions import BadRequestException, NotFoundException
+from apicultura.core.exceptions import BadRequestException, NotFoundException, CredentialsException
 from apicultura.core.models.user_model import User
 from apicultura.core.security.password_hash import get_password_hash
 from apicultura.core.schemas.user_schema import UserIn, UserUpdate
@@ -50,7 +50,7 @@ class UserServices:
         """Update an existing user"""
 
         if current_user.id != user_id:
-            raise BadRequestException('Not enough permissions')
+            raise CredentialsException('Not enough permissions')
         
         db_user = self.repo.get_by_id(pk=user_id)
         if not user_id:
@@ -65,7 +65,7 @@ class UserServices:
         """Delete and existing user"""
         
         if current_user.id != user_id:
-            raise BadRequestException('Not enough permissions')
+            raise CredentialsException('Not enough permissions')
         
         user = self.get_user_by_id(user_id=user_id)
         if not user:
