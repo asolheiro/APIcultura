@@ -5,7 +5,12 @@ from fastapi import APIRouter, Depends
 
 from apicultura.core.models.user_model import User
 from apicultura.core.security.user import get_current_user
-from apicultura.core.schemas.user_schema import UserIn, UserOut, UserUpdate, UsersList
+from apicultura.core.schemas.user_schema import (
+    UserIn,
+    UserOut,
+    UserUpdate,
+    UsersList,
+)
 from apicultura.v1.services.user_services import UserServices
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -27,7 +32,7 @@ def get_user(user_id: int, service: Services):
 
 @router.get("/view/", status_code=HTTPStatus.OK, response_model=UsersList)
 def get_users_listed(service: Services):
-    return {'users': service.list_users(limit=10, skip=0)}
+    return {"users": service.list_users(limit=10, skip=0)}
 
 
 @router.put("/{user_id}", status_code=HTTPStatus.OK, response_model=UserOut)
@@ -35,13 +40,11 @@ def update_user(
     user_id: int,
     user_update: UserUpdate,
     service: Services,
-    current_user: CurrentUser
+    current_user: CurrentUser,
 ):
     return service.update_user(
-        user_id=user_id, 
-        user_update=user_update, 
-        current_user=current_user
-        )
+        user_id=user_id, user_update=user_update, current_user=current_user
+    )
 
 
 @router.delete("/{user_id}", status_code=HTTPStatus.NO_CONTENT)

@@ -1,6 +1,10 @@
 from fastapi import Depends
 
-from apicultura.core.exceptions import BadRequestException, NotFoundException, CredentialsException
+from apicultura.core.exceptions import (
+    BadRequestException,
+    NotFoundException,
+    CredentialsException,
+)
 from apicultura.core.models.user_model import User
 from apicultura.core.security.password_hash import get_password_hash
 from apicultura.core.schemas.user_schema import UserIn, UserUpdate
@@ -34,24 +38,24 @@ class UserServices:
                     "Username already exists on database"
                 )
             elif db_user.email == user_input.email:
-                raise BadRequestException(
-                    "Email already exists on database"
-                    )
-    
+                raise BadRequestException("Email already exists on database")
+
         db_user = User(
-            email = user_input.email,
-            username = user_input.username,
-            password=get_password_hash(user_input.password)
+            email=user_input.email,
+            username=user_input.username,
+            password=get_password_hash(user_input.password),
         )
-        
+
         return self.repo.create(user=db_user)
 
-    def update_user(self, user_id: int, user_update: UserUpdate, current_user: User):
+    def update_user(
+        self, user_id: int, user_update: UserUpdate, current_user: User
+    ):
         """Update an existing user"""
 
         if current_user.id != user_id:
-            raise CredentialsException('Not enough permissions')
-        
+            raise CredentialsException("Not enough permissions")
+
         db_user = self.repo.get_by_id(pk=user_id)
         if not user_id:
             raise NotFoundException("User not found")
@@ -63,14 +67,12 @@ class UserServices:
 
     def delete_user(self, user_id: int, current_user: User):
         """Delete and existing user"""
-        
+
         if current_user.id != user_id:
-            raise CredentialsException('Not enough permissions')
-        
+            raise CredentialsException("Not enough permissions")
+
         user = self.get_user_by_id(user_id=user_id)
         if not user:
             raise NotFoundException("User not found")
 
         self.repo.delete(user_id=user_id)
-
-        return "ok"

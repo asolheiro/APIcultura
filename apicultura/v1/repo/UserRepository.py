@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from apicultura.core.dependencies import get_db
 from apicultura.core.exceptions import DuplicatedRegister, NotFoundException
 from apicultura.core.models.user_model import User
-from apicultura.core.schemas.user_schema import UserIn
 from apicultura.core.security.password_hash import get_password_hash
 
 
@@ -41,16 +40,15 @@ class UserRepository:
         query = self.base_query
         return query.offset(skip).limit(limit).all()
 
-    def create(self, user: UserIn) -> User:
-        self.db.add(user)
+    def create(self, user: User) -> User:
         try:
+            self.db.add(user)
             self.db.commit()
+            self.db.refresh(user)
+            return user
         except IntegrityError as exc:
             self.db.rollback()
             raise DuplicatedRegister(model=self._model) from exc
-
-        self.db.refresh(user)
-        return user
 
     def update(self, user_id: int, **updated_values) -> User:
         db_user = self.db.scalar(select(User).where(User.id == user_id))
@@ -58,8 +56,8 @@ class UserRepository:
             raise NotFoundException("User not found")
 
         for key, value in updated_values.items():
-            if key == 'password':
-                return get_password_hash(value)
+            if key == "password":
+                get_password_hash(value)
             setattr(db_user, key, value)
 
         self.db.add(db_user)
@@ -68,7 +66,7 @@ class UserRepository:
 
         return db_user
 
-    def delete(self, user_id: int) -> User:
+    def delete(self, user_id: int):
         user = self.db.scalar(select(User).where(User.id == user_id))
         if not user:
             raise NotFoundException("User not found")
@@ -76,4 +74,4 @@ class UserRepository:
         self.db.delete(user)
         self.db.commit()
 
-        return "ok"
+        return
