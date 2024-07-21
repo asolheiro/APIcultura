@@ -6,13 +6,13 @@ from apicultura.core.models.task_models import TaskStatus
 class TaskIn(BaseModel):
     title: str
     description: str
-    state: TaskStatus
+    state: TaskStatus = TaskStatus.draft
 
 
 class TaskUpdate(BaseModel):
-    title: str
-    description: str
-    state: TaskStatus
+    title: str | None = None
+    description: str | None = None
+    state: TaskStatus | None = None
 
 
 class TaskOut(BaseModel):

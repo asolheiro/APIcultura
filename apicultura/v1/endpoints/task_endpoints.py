@@ -14,7 +14,7 @@ from apicultura.v1.services.task_services import TaskServices
 from apicultura.core.security.user import get_current_user
 
 
-router = APIRouter(prefix="/tasks", tags=["tasks"])
+router = APIRouter(prefix="/task", tags=["task"])
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 Services = Annotated[TaskServices, Depends(TaskServices)]
@@ -24,7 +24,7 @@ Services = Annotated[TaskServices, Depends(TaskServices)]
 def create_task(
     task_input: TaskIn, service: Services, current_user: CurrentUser
 ):
-    return service.create_task(
+    return service.create_task_with_user(
         task_input=task_input, current_user=current_user
     )
 

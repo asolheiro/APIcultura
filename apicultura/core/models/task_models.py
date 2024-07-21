@@ -1,15 +1,11 @@
-from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String, Column, Integer
 from sqlalchemy.orm import (
     relationship,
-    mapped_column,
-    Mapped,
 )
 
-from apicultura.core.models.base import BModel
-from apicultura.core.models.user_model import User
+from apicultura.core.models.base import BModel, ChoiceType
 
 
 class TaskStatus(str, Enum):
@@ -26,10 +22,12 @@ class TaskStatus(str, Enum):
 class Task(BModel):
     __tablename__ = "tasks"
 
-    id: Mapped[int] = mapped_column(init=False, primary_key=True)
-    tutle: Mapped[str]
-    description: Mapped[str]
-    state: Mapped[TaskStatus]
-
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped[User] = relationship(init=False, back_populates="tasks")
+    title = Column(String())
+    description = Column(String())
+    state = Column(
+        ChoiceType(TaskStatus),
+        nullable=False,
+        default=TaskStatus.todo.value,
+    )
+    user_id = Column(Integer(), ForeignKey("users.id"))
+    user = relationship("User")

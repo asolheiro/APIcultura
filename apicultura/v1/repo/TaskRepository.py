@@ -35,7 +35,7 @@ class TaskRepository:
 
     def update(self, **updated_values) -> Task:
         db_task = self.db.scalar(
-            select(Task).where(Task.id == updated_values["id"])
+            select(Task).where(Task.id == updated_values["task_id"])
         )
         if not db_task:
             raise NotFoundException("Task not found")

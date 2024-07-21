@@ -10,7 +10,7 @@ class TaskServices:
     def __init__(self, repo: TaskRepository = Depends(TaskRepository)) -> None:
         self.repo = repo
 
-    def create_task(self, task_input: TaskIn, current_user: User):
+    def create_task_with_user(self, task_input: TaskIn, current_user: User):
         """Create a new task to an logged user"""
 
         if not current_user:
@@ -25,7 +25,7 @@ class TaskServices:
 
         return self.repo.create(task=db_task)
 
-    def get_user_task_by_id(self, task_id: int, current_user: User):
+    def get_user_task_by_id(self, task_id: int, current_user: User) -> Task:
         """Get an user task by id"""
 
         db_task = self.repo.get_task_by_id(pk=task_id)
@@ -36,7 +36,7 @@ class TaskServices:
             raise CredentialsException("Not enough permissions")
         return db_task
 
-    def list_user_tasks(self, current_user: User):
+    def list_user_tasks(self, current_user: User) -> list[Task]:
         """List all user tasks"""
 
         db_tasks = self.repo.list_user_tasks(user_id=current_user.id)
@@ -50,7 +50,7 @@ class TaskServices:
 
     def update_task(
         self, task_id: int, task_update: TaskUpdate, current_user: User
-    ):
+    ) -> Task:
         """Update an existins user task"""
         db_task = self.repo.get_task_by_id(pk=task_id)
         if not db_task:
@@ -64,7 +64,7 @@ class TaskServices:
 
         return db_task
 
-    def delete_task(self, task_id: int, current_user: User):
+    def delete_task(self, task_id: int, current_user: User) -> None:
         """Delete an existing user task"""
 
         db_task = self.repo.get_task_by_id(pk=task_id)
