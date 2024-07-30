@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import Annotated
 
 
@@ -36,9 +36,23 @@ def get_task(task_id: int, service: Services, current_user: CurrentUser):
     )
 
 
-@router.get("/tasks", status_code=200, response_model=TasksList)
-def get_tasks_list(service: Services, current_user: CurrentUser):
-    return service.list_user_tasks(current_user=current_user)
+@router.get("/", status_code=200, response_model=TasksList)
+def get_tasks_list(service: Services, 
+                   current_user: CurrentUser,
+                   title: str = Query(None),
+                   description: str = Query(None),
+                   state: str = Query(None),
+                   offset: str = Query(None),
+                   limit: int = Query(None),
+                   ):
+    return service.list_user_tasks(
+        current_user=current_user, 
+        title=title, 
+        description=description,
+        state=state,
+        offset=offset,
+        limit=limit,
+        )
 
 
 @router.put("/{task_id}", status_code=HTTPStatus.OK, response_model=TaskOut)

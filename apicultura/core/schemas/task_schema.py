@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from apicultura.core.models.task_models import TaskStatus
 
@@ -20,4 +20,6 @@ class TaskOut(BaseModel):
 
 
 class TasksList(BaseModel):
-    tasks: list[TaskOut]
+    Tasks: list[TaskOut]
+
+    model_config = ConfigDict(from_attributes=True)

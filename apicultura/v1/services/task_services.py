@@ -36,14 +36,29 @@ class TaskServices:
             raise CredentialsException("Not enough permissions")
         return db_task
 
-    def list_user_tasks(self, current_user: User) -> list[Task]:
+    def list_user_tasks(
+            self, 
+            current_user: User,
+            title: str, 
+            description: str,
+            state: str,
+            offset: int,
+            limit: int,
+    ) -> list[Task]:
         """List all user tasks"""
 
-        db_tasks = self.repo.list_user_tasks(user_id=current_user.id)
+        db_tasks = self.repo.list_user_tasks(
+            user_id=current_user.id,
+            title=title, 
+            description=description,
+            state=state,
+            offset=offset,
+            limit=limit,
+        )
         if not db_tasks:
-            raise NotFoundException("Task not found")
+            raise NotFoundException("Tasks not found")
 
-        if current_user.id != db_tasks[0].user_id:
+        if current_user.id != db_tasks['Tasks'][0].user_id:
             raise CredentialsException("Not enough permissions")
 
         return db_tasks

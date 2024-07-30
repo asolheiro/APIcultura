@@ -24,8 +24,27 @@ class TaskRepository:
     def get_task_by_id(self, pk: int) -> Task:
         return self.base_query.filter(self._model.id == pk).first()
 
-    def list_user_tasks(self, user_id: int) -> list[Task]:
-        return self.base_query.filter(self._model.user_id == user_id).all()
+    def list_user_tasks(
+            self, 
+            user_id: int,
+            title: str, 
+            description: str,
+            state: str,
+            offset: int,
+            limit: int,
+        ) -> list[Task]:
+
+        query = select(Task).where(Task.user_id == user_id)
+
+        if title:
+            query = query.filter(Task.title.contains(title))
+        if description:
+            query = query.filter(Task.description.contains(description))
+        if state:
+            query = query.filter(Task.state.contains(state))
+
+        tasks = self.db.scalars(query.offset(offset).limit(limit)).all()
+        return {'Tasks': tasks}
 
     def create(self, task: Task) -> Task:
         self.db.add(task)
