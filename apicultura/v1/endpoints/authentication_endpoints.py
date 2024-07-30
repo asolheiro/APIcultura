@@ -12,28 +12,27 @@ from apicultura.core.security.user import get_current_user
 from apicultura.core.security.token import crete_access_token
 
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["auth"]
-)
+router = APIRouter(prefix="/auth", tags=["auth"])
 
-OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends(OAuth2PasswordRequestForm)]
+OAuth2Form = Annotated[
+    OAuth2PasswordRequestForm, Depends(OAuth2PasswordRequestForm)
+]
 Services = Annotated[TokenServices, Depends(TokenServices)]
 
-@router.post('/', status_code=HTTPStatus.OK, response_model=TokenOut)
+
+@router.post("/", status_code=HTTPStatus.OK, response_model=TokenOut)
 def login_for_access_token(
-        form_data: OAuth2Form,
-        service: Services,
+    form_data: OAuth2Form,
+    service: Services,
 ):
     return service.get_user_token(form_data=form_data)
 
-@router.post('/refresh', response_model=TokenOut)
+
+@router.post("/refresh", response_model=TokenOut)
 def refresh_access_token(
     user: User = Depends(get_current_user),
 ):
-    new_access_token = crete_access_token(data = {
-        'sub': user.email
-    })
+    new_access_token = crete_access_token(data={"sub": user.email})
 
     return {
         "access_token": new_access_token,
