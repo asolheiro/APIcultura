@@ -27,4 +27,4 @@ jobs:
         run: poetry install
 
       - name: Execução dos testes
-        run: make test
+        run: poetry run pytest apicultura -vv
