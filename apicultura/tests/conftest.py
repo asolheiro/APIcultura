@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.pool import StaticPool
+from testcontainers.postgres import PostgresContainer
 
 from apicultura.core.dependencies import get_db
 from apicultura.core.models.base import Base
@@ -52,6 +53,26 @@ def client():
 
 UserFactory = get_user_factory(session=session)
 
+
+# Também pode ser usaddo para criar containers de testes
+#
+# @pytest.fixture(scope='session')
+# def engine():
+#     with PostgresContainer('postgres:16', driver='psycopg') as postgres:
+#         _engine = create_engine(postgres.get_connection_url())
+#         with _engine.begin():
+#           yield _engine
+
+# @pytest.fixture
+# def client(engine):
+#     with PostgresContainer('postgres:16', driver='psycopg') as postgres:
+#         engine = create_engine(postgres.get_connection_url())
+#         table_registry.metadata.create_all(engine)
+
+#         with Session(engine) as session:
+#             yield session
+#             session.rollback()
+#         table_registry.metadata.drop_all(engine)
 
 @pytest.fixture()
 def user(client):
