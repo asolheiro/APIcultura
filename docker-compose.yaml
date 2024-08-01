@@ -9,7 +9,7 @@ services:
         restart: true
     env_file:
       - .env
-    expose:
+    ports:
       - "8000:8000"
   app-database:
     image: postgres
