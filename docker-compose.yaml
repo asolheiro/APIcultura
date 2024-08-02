@@ -29,10 +29,8 @@ services:
       start_period: 15s
   test:
     image: postgres
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - .env
     ports:
       - "5433:5432"
 volumes:

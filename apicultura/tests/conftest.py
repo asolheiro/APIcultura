@@ -1,14 +1,15 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.pool import StaticPool
 from testcontainers.postgres import PostgresContainer
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker, Session
+from sqlalchemy.pool import StaticPool
 
 from apicultura.core.dependencies import get_db
 from apicultura.core.models.base import Base
 from apicultura.core.settings import Settings
 from apicultura.main import app
+
 
 from apicultura.tests.factories.user_factory import get_user_factory
 
@@ -51,11 +52,10 @@ def client():
     app.dependency_overrides.clear()
 
 
-UserFactory = get_user_factory(session=session)
 
 
-# Também pode ser usaddo para criar containers de testes
-#
+# # Também pode ser usaddo para criar containers de testes
+# #####
 # @pytest.fixture(scope='session')
 # def engine():
 #     with PostgresContainer('postgres:16', driver='psycopg') as postgres:
@@ -64,16 +64,29 @@ UserFactory = get_user_factory(session=session)
 #           yield _engine
 
 # @pytest.fixture
-# def client(engine):
-#     with PostgresContainer('postgres:16', driver='psycopg') as postgres:
-#         engine = create_engine(postgres.get_connection_url())
-#         table_registry.metadata.create_all(engine)
+# def session(engine):
+#     Base.metadata.create_all(engine)
 
-#         with Session(engine) as session:
-#             yield session
-#             session.rollback()
-#         table_registry.metadata.drop_all(engine)
+#     with Session(engine) as session:
+#         yield session
+#         session.rollback()
+    
+#     Base.metadata.drop_all(engine)
 
+
+# @pytest.fixture
+# def client(session):
+#     def get_session_override():
+#         return session
+    
+#     with TestClient(app) as client:
+#         app.dependency_overrides[get_db] = get_session_override
+#         yield client
+
+#     app.dependency_overrides.clear
+#####
+
+UserFactory = get_user_factory(session=session)
 @pytest.fixture()
 def user(client):
     data = {
