@@ -1,8 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
-from testcontainers.postgres import PostgresContainer
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker, Session
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from apicultura.core.dependencies import get_db
